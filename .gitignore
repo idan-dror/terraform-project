@@ -1,0 +1,13 @@
+*
+!*/
+!.gitignore
+!*.tf
+!*.yml
+!*.yaml
+!.json
+!*.tf.json
+!*.sh
+!*.md
+
+.idea/
+.terraform/
