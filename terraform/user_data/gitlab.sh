@@ -1,7 +1,5 @@
 #!/bin/bash
 
-systemctl enable --now docker || true
-
 mkdir -p /srv/gitlab
 
 while true; do

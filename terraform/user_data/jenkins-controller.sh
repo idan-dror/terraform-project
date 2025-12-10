@@ -1,7 +1,5 @@
 #!/bin/bash
 
-systemctl enable --now docker || true
-
 mkdir -p /srv/jenkins_home
 
 while true; do
