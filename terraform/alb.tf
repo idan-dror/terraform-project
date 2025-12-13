@@ -2,10 +2,10 @@ module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 10.0"
 
-  name               = "${var.project_name}-main-alb"
-  load_balancer_type = "application"
-  vpc_id             = module.vpc.vpc_id
-  subnets            = module.vpc.public_subnet_ids
+  name                       = "${var.project_name}-main-alb"
+  load_balancer_type         = "application"
+  vpc_id                     = module.vpc.vpc_id
+  subnets                    = module.vpc.public_subnet_ids
   enable_deletion_protection = false
 
   #security group for ALB:
@@ -36,15 +36,15 @@ module "alb" {
   #listeners:
   listeners = {
     https = {
-      port     = 443
-      protocol = "HTTPS"
+      port            = 443
+      protocol        = "HTTPS"
       certificate_arn = var.acm_certificate_arn
 
       #default rule if host name don't match
       fixed_response = {
         content_type = "text/plain"
         message_body = "Host not allowed"
-        status_code = "404"
+        status_code  = "404"
       }
 
       #host name based rules
@@ -88,12 +88,12 @@ module "alb" {
     }
 
     http = {
-      port = 80
+      port     = 80
       protocol = "HTTP"
 
       redirect = {
-        port = "443"
-        protocol = "HTTPS"
+        port        = "443"
+        protocol    = "HTTPS"
         status_code = "HTTP_301"
       }
     }
@@ -106,7 +106,7 @@ module "alb" {
       protocol    = "HTTP"
       port        = 80
       target_type = "instance"
-      target_id = module.gitlab.instance_id
+      target_id   = module.gitlab.instance_id
       vpc_id      = module.vpc.vpc_id
 
       health_check = {
@@ -122,7 +122,7 @@ module "alb" {
       protocol    = "HTTP"
       port        = 8080
       target_type = "instance"
-      target_id = module.jenkins_controller.instance_id
+      target_id   = module.jenkins_controller.instance_id
       vpc_id      = module.vpc.vpc_id
 
       health_check = {

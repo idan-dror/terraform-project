@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -u
+exec > >(tee -a /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
+
 mkdir -p /srv/jenkins_home
 
 while true; do
@@ -18,9 +21,28 @@ fi
 systemctl daemon-reload
 mount -a
 
+systemctl enable --now docker >/dev/null 2>&1 || true
+
+while true; do
+  if docker info >/dev/null 2>&1; then
+    break
+  fi
+  echo "Waiting for Docker daemon..."
+  sleep 2
+done
+
+while true; do
+  if curl -fsS https://hub.docker.com/ >/dev/null; then
+    break
+  fi
+  echo "Waiting for NAT gateway..."
+  sleep 2
+done
+
 docker run -d \
     --name jenkins-controller \
     --restart unless-stopped \
     -p 8080:8080 \
     -v /srv/jenkins_home:/var/jenkins_home \
     jenkins/jenkins:2.533-jdk21
+

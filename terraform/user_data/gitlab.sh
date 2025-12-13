@@ -6,7 +6,7 @@ while true; do
   if [ -b /dev/nvme1n1 ]; then
     break
   fi
-  echo "Waiting for EBS volume"
+  echo "Waiting for EBS volume to be attached"
   sleep 5
 done
 
@@ -17,6 +17,24 @@ fi
 
 systemctl daemon-reload
 mount -a
+
+systemctl enable --now docker >/dev/null 2>&1 || true
+
+while true; do
+  if docker info >/dev/null 2>&1; then
+    break
+  fi
+  echo "Waiting for Docker daemon..."
+  sleep 2
+done
+
+while true; do
+  if curl -fsS https://hub.docker.com/ >/dev/null; then
+    break
+  fi
+  echo "Waiting for NAT gateway..."
+  sleep 5
+done
 
 GITLAB_OMNIBUS_CONFIG=$(cat <<'EOF'
 external_url 'https://git-tf.idror.net'
